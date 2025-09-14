@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    "rootDir": "./",
+    "outDir": "./dist",
+
+    "module": "nodenext",
+    "target": "es2017",
+    "types": [],
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "useDefineForClassFields": true,
+    "noUncheckedIndexedAccess": true,
+    "strict": true,
+    "exactOptionalPropertyTypes": false,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
+    //"moduleResolution": "nodenext",
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ]
+  // "references": [
+  //   {
+  //     "path": "./tsconfig.node.json"
+  //   }
+  // ]
+}
