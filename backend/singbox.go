@@ -17,14 +17,6 @@ import (
 var singBoxPath = filepath.Join("assets", "sing-box.exe")
 var currentProcess *os.Process
 
-var RunningIconData []byte
-var StoppedIconData []byte
-
-func SetIcons(running, stopped []byte) {
-	RunningIconData = running
-	StoppedIconData = stopped
-}
-
 func generateConfig(vless string) (string, error) {
 	log.Println("Generating config for VLESS: ", vless)
 	server, portStr, uuid, flow, network, packetEncoding, security, fingerprint, publicKey, serverName, shortID, path, err := parseVLESS(vless)
