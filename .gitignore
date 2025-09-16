@@ -1,6 +1,7 @@
 # default
 build/bin
 build/sing-box
+assets/sing-box.exe
 node_modules
 frontend/dist
 
