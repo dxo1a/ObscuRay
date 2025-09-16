@@ -4,12 +4,14 @@ import (
 	"ObscuRay/backend"
 	"context"
 	"embed"
+	"log"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+	win "golang.org/x/sys/windows"
 )
 
 //go:embed all:frontend/dist
@@ -26,6 +28,7 @@ func main() {
 	app := NewApp()
 
 	backend.LoadProfiles()
+
 	//region tray
 	runningIconData, error := runningIcon.ReadFile("assets/running.ico")
 	if error != nil {
@@ -39,6 +42,10 @@ func main() {
 
 	go setupTray(app)
 	//endregion
+
+	if err := setShutdownPriority(); err != nil {
+		log.Println("Error settings shutdown priority:", err.Error())
+	}
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -72,4 +79,15 @@ func main() {
 	if err != nil {
 		println("Error:", err.Error())
 	}
+}
+
+func setShutdownPriority() error {
+	kernel32 := win.NewLazyDLL("kernel32.dll")
+	setProcessShutdownParameters := kernel32.NewProc("SetProcessShutdownParameters")
+
+	ret, _, err := setProcessShutdownParameters.Call(uintptr(0x3FF), 0)
+	if ret == 0 {
+		return err
+	}
+	return nil
 }
