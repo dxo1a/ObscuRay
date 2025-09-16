@@ -11,3 +11,5 @@ It uses a system proxy by default.
 - Profiles: %appdata%/ObscuRay/profiles.json
 - Logs: %appdata%/ObscuRay/app.log
 - Cache: %appdata%/ObscuRay/cache/
+
+Currently only for Windows. If I get my hands on it, I'll do it for Linux.
