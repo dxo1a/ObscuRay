@@ -31,11 +31,22 @@ var stoppedIcon embed.FS
 var singBoxEmbed embed.FS
 
 func main() {
-	logFile, err := os.OpenFile(filepath.Join(os.Getenv("APPDATA"), "ObscuRay", "app.log"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	mutexName := "ObscuRay_SingleInstanceMutex"
+	mutex, err := win.CreateMutex(nil, true, win.StringToUTF16Ptr(mutexName))
 	if err != nil {
-		println("Failed to open log file:", err.Error())
+		log.Fatalf("Failed to create mutex: %v", err)
 	}
-	log.SetOutput(logFile)
+	defer win.CloseHandle(mutex)
+
+	lastError := win.GetLastError()
+	if lastError == win.ERROR_ALREADY_EXISTS {
+		log.Println("Another instance of ObscuRay is already running")
+		os.Exit(0)
+	}
+
+	if err := backend.SetupLogging(); err != nil {
+		println("Failed to setup logging:", err.Error())
+	}
 
 	singBoxPath, err := extractSingBox()
 	if err != nil {
@@ -58,9 +69,9 @@ func main() {
 		println("Error loading stopped.ico:", error.Error())
 	}
 	backend.SetIcons(runningIconData, stoppedIconData)
+	//endregion
 
 	go setupTray(app)
-	//endregion
 
 	if err := setShutdownPriority(); err != nil {
 		log.Println("Error settings shutdown priority:", err.Error())
