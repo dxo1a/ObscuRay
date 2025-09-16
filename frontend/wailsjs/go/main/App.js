@@ -6,8 +6,20 @@ export function AddProfileFromClipboard() {
   return window['go']['main']['App']['AddProfileFromClipboard']();
 }
 
+export function CopyVLESS(arg1) {
+  return window['go']['main']['App']['CopyVLESS'](arg1);
+}
+
+export function DeleteProfile(arg1) {
+  return window['go']['main']['App']['DeleteProfile'](arg1);
+}
+
 export function GetProfiles() {
   return window['go']['main']['App']['GetProfiles']();
+}
+
+export function GetTrafficStats() {
+  return window['go']['main']['App']['GetTrafficStats']();
 }
 
 export function StartProfile(arg1) {

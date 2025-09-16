@@ -1,11 +1,5 @@
 @import "tailwindcss";
 
-html {
-    background-color: rgba(27, 38, 54, 1);
-    text-align: center;
-    color: white;
-}
-
 body {
     margin: 0;
     color: white;
@@ -22,7 +16,51 @@ body {
     url("assets/fonts/nunito-v16-latin-regular.woff2") format("woff2");
 }
 
+body,
 #app {
-    height: 100vh;
+    height: 100%;
+}
+
+html {
     text-align: center;
+    color: white;
+    height: 100%;
+}
+
+.n-config-provider {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+.n-layout-scroll-container {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+    user-select: none;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
+
+button {
+    cursor: pointer;
+}
+
+.fade-enter-active, .fade-leave-active {
+    transition: all 0.3s ease;
+}
+
+.fade-enter-from, .fade-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+/* Для Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #4b5563 #1f2937;       /* thumb, track */
 }

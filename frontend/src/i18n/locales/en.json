@@ -1,0 +1,11 @@
+{
+  "profileName": "Profile name",
+  "status": "Status",
+  "actions": "Actions",
+  "active": "Active",
+  "inactive": "Inactive",
+  "start": "Start",
+  "stop": "Stop",
+  "delete": "Delete",
+  "addProfileHint": "Right-click here to add VLESS from clipboard"
+}

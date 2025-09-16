@@ -1,3 +1,26 @@
+# default
 build/bin
+build/sing-box
 node_modules
 frontend/dist
+
+# as a precaution
+profiles.json
+assets/*.db
+cache.db
+obscuray-config.json
+
+# sys files
+Thumbs.db
+Dekstop.ini
+
+# go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+
