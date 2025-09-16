@@ -39,6 +39,12 @@ func generateConfig(vless string) (string, error) {
 		packetEncoding = ""
 	}
 
+	cacheDir := filepath.Join(os.Getenv("APPDATA"), "ObscuRay", "cache")
+	if err := os.MkdirAll(cacheDir, 0755); err != nil {
+		log.Printf("Failed to create cache directory for in-sing-box cache: %v", err)
+	}
+	cachePath := filepath.Join(cacheDir, "cache.db")
+
 	config := map[string]interface{}{
 		"dns": map[string]interface{}{
 			"independent_cache": true,
@@ -186,7 +192,8 @@ func generateConfig(vless string) (string, error) {
 		},
 		"experimental": map[string]interface{}{
 			"cache_file": map[string]interface{}{
-				"enabled": false,
+				"enabled": true,
+				"path":    cachePath,
 			},
 			"clash_api": map[string]interface{}{
 				"external_controller": "127.0.0.1:9090",
