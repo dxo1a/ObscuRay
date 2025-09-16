@@ -3,8 +3,12 @@ package main
 import (
 	"ObscuRay/backend"
 	"context"
+	"crypto/sha256"
 	"embed"
+	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -23,7 +27,22 @@ var runningIcon embed.FS
 //go:embed assets/stopped.ico
 var stoppedIcon embed.FS
 
+//go:embed assets/sing-box.exe
+var singBoxEmbed embed.FS
+
 func main() {
+	logFile, err := os.OpenFile(filepath.Join(os.Getenv("APPDATA"), "ObscuRay", "app.log"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		println("Failed to open log file:", err.Error())
+	}
+	log.SetOutput(logFile)
+
+	singBoxPath, err := extractSingBox()
+	if err != nil {
+		log.Fatalf("Failed to extract sing-box.exe: %v", err)
+	}
+	backend.SetSingBoxPath(singBoxPath)
+
 	// Create an instance of the app structure
 	app := NewApp()
 
@@ -48,7 +67,7 @@ func main() {
 	}
 
 	// Create application with options
-	err := wails.Run(&options.App{
+	err = wails.Run(&options.App{
 		Title:     "ObscuRay",
 		Width:     700,
 		Height:    400,
@@ -90,4 +109,47 @@ func setShutdownPriority() error {
 		return err
 	}
 	return nil
+}
+
+func extractSingBox() (string, error) {
+	cacheDir := filepath.Join(os.Getenv("APPDATA"), "ObscuRay", "cache")
+	if err := os.MkdirAll(cacheDir, 0755); err != nil {
+		return "", fmt.Errorf("failed to create cache directory: %v", err)
+	}
+	cachePath := filepath.Join(cacheDir, "sing-box.exe")
+
+	singBoxData, err := singBoxEmbed.ReadFile("assets/sing-box.exe")
+	if err != nil {
+		return "", fmt.Errorf("failed to read sing-box.exe from assets: %v", err)
+	}
+
+	expectedHash := sha256.Sum256(singBoxData)
+
+	// Check if file exists and hash matches
+	if _, err := os.Stat(cachePath); err == nil {
+		fileData, err := os.ReadFile(cachePath)
+		if err != nil {
+			log.Printf("Failed to read cached sing-box.exe: %v", err)
+		} else {
+			actualHash := sha256.Sum256(fileData)
+			if actualHash == expectedHash {
+				log.Println("Using existing cached sing-box.exe:", cachePath)
+				return cachePath, nil
+			}
+			log.Println("Cached sing-box.exe hash mismatch, overwriting...")
+		}
+	} else {
+		log.Println("Cached sing-box.exe not found, creating new...")
+	}
+
+	// Write or overwrite the file
+	if err := os.WriteFile(cachePath, singBoxData, 0755); err != nil {
+		return "", fmt.Errorf("failed to write sing-box.exe to cache: %v", err)
+	}
+	if err := os.Chmod(cachePath, 0755); err != nil {
+		return "", fmt.Errorf("failed to chmod sing-box.exe: %v", err)
+	}
+
+	log.Println("sing-box.exe cached at:", cachePath)
+	return cachePath, nil
 }

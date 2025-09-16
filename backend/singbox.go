@@ -14,11 +14,15 @@ import (
 	"github.com/getlantern/systray"
 )
 
-var singBoxPath = filepath.Join("assets", "sing-box.exe")
+var singBoxPath string
 var currentProcess *os.Process
 
+func SetSingBoxPath(path string) {
+	singBoxPath = path
+}
+
 func generateConfig(vless string) (string, error) {
-	log.Println("Generating config for VLESS: ", vless)
+	log.Println("Generating config for VLESS...")
 	server, portStr, uuid, flow, network, packetEncoding, security, fingerprint, publicKey, serverName, shortID, path, err := parseVLESS(vless)
 	if err != nil {
 		log.Printf("Failed to parse VLESS: %v", err)
@@ -182,7 +186,7 @@ func generateConfig(vless string) (string, error) {
 		},
 		"experimental": map[string]interface{}{
 			"cache_file": map[string]interface{}{
-				"enabled": true,
+				"enabled": false,
 			},
 			"clash_api": map[string]interface{}{
 				"external_controller": "127.0.0.1:9090",
@@ -252,6 +256,10 @@ func StartProfile(id string) error {
 	if err != nil {
 		log.Printf("Failed to generate config: %v", err)
 		return err
+	}
+
+	if singBoxPath == "" {
+		return fmt.Errorf("sing-box.exe path not set")
 	}
 
 	// start sing-box
