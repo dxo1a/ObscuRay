@@ -13,3 +13,9 @@ It uses a system proxy by default.
 - Cache: %appdata%/ObscuRay/cache/
 
 Currently only for Windows. If I get my hands on it, I'll do it for Linux.
+
+## Source
+
+For those who will use the source code:\
+For sing-box build with the necessary flags, there is a build-singbox.go\
+`go run ./tools/build-singbox.go`
