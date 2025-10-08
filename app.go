@@ -3,10 +3,6 @@ package main
 import (
 	"ObscuRay/backend"
 	"context"
-	"os"
-
-	"github.com/getlantern/systray"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
@@ -57,46 +53,4 @@ func (a *App) GetTrafficStats() (map[string]int64, error) {
 
 func (a *App) CopyVLESS(id string) error {
 	return backend.CopyVLESS(id)
-}
-
-func setupTray(app *App) {
-	lang := backend.GetLang()
-	t := backend.Translations[lang]
-
-	systray.Run(func() {
-		systray.SetTitle("ObscuRay")
-		systray.SetTooltip(t["title"])
-
-		mShow := systray.AddMenuItem(t["show"], t["showDesc"])
-		mQuit := systray.AddMenuItem(t["quit"], t["quitDesc"])
-
-		activeProfileExists := false
-		for _, p := range backend.Profiles {
-			if p.IsActive {
-				activeProfileExists = true
-				break
-			}
-		}
-
-		if activeProfileExists && backend.RunningIconData != nil {
-			systray.SetIcon(backend.RunningIconData)
-		} else if backend.StoppedIconData != nil {
-			systray.SetIcon(backend.StoppedIconData)
-		}
-
-		go func() {
-			for {
-				select {
-				case <-mShow.ClickedCh:
-					runtime.WindowShow(app.ctx)
-				case <-mQuit.ClickedCh:
-					app.quitRequested = true
-					runtime.Quit(app.ctx)
-				}
-			}
-		}()
-	}, func() {
-		backend.StopProfile()
-		os.Exit(0)
-	})
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"ObscuRay/backend"
-	"context"
 	"crypto/sha256"
 	"embed"
 	"fmt"
@@ -14,18 +13,11 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 	win "golang.org/x/sys/windows"
 )
 
 //go:embed all:frontend/dist
 var assets embed.FS
-
-//go:embed assets/running.ico
-var runningIcon embed.FS
-
-//go:embed assets/stopped.ico
-var stoppedIcon embed.FS
 
 //go:embed assets/sing-box.exe
 var singBoxEmbed embed.FS
@@ -59,20 +51,6 @@ func main() {
 
 	backend.LoadProfiles()
 
-	//region tray
-	runningIconData, error := runningIcon.ReadFile("assets/running.ico")
-	if error != nil {
-		println("Error loading running.ico:", error.Error())
-	}
-	stoppedIconData, error := stoppedIcon.ReadFile("assets/stopped.ico")
-	if error != nil {
-		println("Error loading stopped.ico:", error.Error())
-	}
-	backend.SetIcons(runningIconData, stoppedIconData)
-	//endregion
-
-	go setupTray(app)
-
 	if err := setShutdownPriority(); err != nil {
 		log.Println("Error settings shutdown priority:", err.Error())
 	}
@@ -94,13 +72,6 @@ func main() {
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup:        app.startup,
 		OnShutdown:       app.shutdown,
-		OnBeforeClose: func(ctx context.Context) bool {
-			if app.quitRequested {
-				return false
-			}
-			runtime.WindowHide(ctx)
-			return true
-		},
 		Bind: []interface{}{
 			app,
 		},

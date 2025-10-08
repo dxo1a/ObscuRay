@@ -10,8 +10,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"syscall"
-
-	"github.com/getlantern/systray"
 )
 
 var singBoxPath string
@@ -299,12 +297,6 @@ func StartProfile(id string) error {
 		return err
 	}
 
-	if RunningIconData != nil {
-		systray.SetIcon(RunningIconData)
-	} else {
-		log.Println("Running icon data not set")
-	}
-
 	log.Println("Profile started successfully")
 	return nil
 }
@@ -331,12 +323,6 @@ func StopProfile() error {
 	if err := saveProfiles(); err != nil {
 		log.Printf("Failed to save profiles: %v", err)
 		return err
-	}
-
-	if StoppedIconData != nil {
-		systray.SetIcon(StoppedIconData)
-	} else {
-		log.Println("Stopped icon data not set")
 	}
 
 	log.Println("Profile stopped successfully")

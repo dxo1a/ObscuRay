@@ -27,14 +27,6 @@ var Translations = map[string]map[string]string{
 	},
 }
 
-var RunningIconData []byte
-var StoppedIconData []byte
-
-func SetIcons(running, stopped []byte) {
-	RunningIconData = running
-	StoppedIconData = stopped
-}
-
 func GetLang() string {
 	lang := os.Getenv("LANG")
 	if len(lang) >= 2 {
