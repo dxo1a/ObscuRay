@@ -64,3 +64,20 @@ button {
   scrollbar-width: thin;
   scrollbar-color: #4b5563 #1f2937;       /* thumb, track */
 }
+
+*[inert]{
+    transition: opacity 0.3s ease;
+    opacity: 0.5;
+}
+
+@keyframes rotate{
+    from{
+        transform: rotate(0);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
+.rotate-animation {
+    animation: rotate 1s linear infinite;
+}
