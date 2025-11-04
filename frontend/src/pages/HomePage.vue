@@ -68,6 +68,7 @@
             <!-- footer -->
             <div
                 @contextmenu.prevent="addProfile"
+                @click.prevent="addProfile"
                 class="p-4 border rounded text-gray-600 hover:text-white border-gray-700 hover:border-gray-500 text-center cursor-pointer transition"
             >
                 {{ $t('addProfileHint') }}

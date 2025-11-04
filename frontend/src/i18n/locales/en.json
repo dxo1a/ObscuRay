@@ -7,5 +7,5 @@
   "start": "Start",
   "stop": "Stop",
   "delete": "Delete",
-  "addProfileHint": "Right-click here to add VLESS from clipboard"
+  "addProfileHint": "Left-click/Right-click here to add VLESS from clipboard"
 }
