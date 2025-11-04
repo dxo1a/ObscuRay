@@ -30,7 +30,7 @@
 
                 <!-- scrollable -->
                 <div class="flex-1 overflow-y-auto min-h-0">
-                    <transition-group name="fade" tag="div">
+                    <TransitionGroup name="fade" tag="div">
                         <div
                             v-for="profile in profiles"
                             :key="profile.id"
@@ -61,12 +61,24 @@
                                 <Trash :size="20"/>
                             </button>
                         </div>
-                    </transition-group>
+                    </TransitionGroup>
+                    <Transition name="fade">
+                        <div 
+                            v-if="isAddLoading"
+                                class="flex justify-center  items-center transition relative h-[49px]"
+                                role="row"
+                            >
+                            <div >
+                                <LoaderCircle class="rotate-animation"/>
+                            </div>
+                        </div>
+                    </Transition>
                 </div>
             </div>
 
-            <!-- footer -->
-            <div
+            <!-- footer --> 
+            <div  
+                :inert="isAddLoading"
                 @contextmenu.prevent="addProfile"
                 @click.prevent="addProfile"
                 class="p-4 border rounded text-gray-600 hover:text-white border-gray-700 hover:border-gray-500 text-center cursor-pointer transition"
@@ -84,10 +96,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, TransitionGroup } from 'vue'
 import { GetProfiles, AddProfileFromClipboard, StartProfile, StopProfile, DeleteProfile, GetTrafficStats } from "../../wailsjs/go/main/App.js"
 import { WindowIsMinimised, Quit, WindowMinimise } from "../../wailsjs/runtime/runtime.js"
-import { X, Minus, SquarePause, SquarePlay, Trash } from "lucide-vue-next"
+import { X, Minus, SquarePause, SquarePlay, Trash, LoaderCircle } from "lucide-vue-next"
 import appIcon from "../assets/images/appicon3.png"
 import appIconActive from "../assets/images/appicon3_1.png"
 
@@ -105,22 +117,39 @@ let statsInterval: number | null = null
 
 const isAnyProfileActive = computed(() => profiles.value.some(p => p.isActive))
 
-const loadProfiles = async () => {
-    try {
-        profiles.value = await GetProfiles()
-    } catch (err) {
-        alert(`Error load profiles: ${err}`)
+const useAddingProfile = () => {
+    const isLoading = ref(false);
+    const loadProfiles = async () => {
+        isLoading.value = true;
+        try {
+            profiles.value = await GetProfiles()
+            isLoading.value = false;
+        } catch (err) {
+            alert(`Error load profiles: ${err}`)
+        } finally {
+            isLoading.value = false;
+        }
     }
-}
 
-const addProfile = async () => {
-    try {
-        await AddProfileFromClipboard()
-        await loadProfiles()
-    } catch (err) {
-        alert(`Error adding profile: ${err}`)
+    const addProfile = async () => {
+        isLoading.value = true;
+        try {
+            await AddProfileFromClipboard()
+            await loadProfiles()
+        } catch (err) {
+            alert(`Error adding profile: ${err}`)
+        } finally {
+            isLoading.value = false;
+        }
+    }
+
+    return {
+        loadProfiles,
+        addProfile,
+        isLoading
     }
 }
+const { addProfile, loadProfiles, isLoading: isAddLoading } = useAddingProfile();
 
 const toggleProfile = async (id: string) => {
     try {
